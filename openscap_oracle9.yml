@@ -1,0 +1,22 @@
+---
+- name: Auditoria OpenSCAP em Oracle Linux 9
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Instalar pacote openscap e content
+      ansible.builtin.package:
+        name:
+          - openscap-scanner
+          - scap-security-guide
+        state: present
+
+    - name: Rodar auditoria com perfil CIS
+      ansible.builtin.command: >
+        oscap xccdf eval
+        --profile xccdf_org.ssgproject.content_profile_cis
+        --results /tmp/oscap-results-ol9.xml
+        --report /tmp/oscap-report-ol9.html
+        /usr/share/xml/scap/ssg-ol9-ds.xml
+      args:
+        warn: false
